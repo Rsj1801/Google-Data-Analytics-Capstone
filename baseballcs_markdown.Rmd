@@ -1,0 +1,79 @@
+---
+title: "Better indicator of success: Exit Velocity vs. Launch Angle"
+author: "Rafael Sandoval Jr"
+date: '2022-06-23'
+output:
+  pdf_document: default
+  html_document: default
+editor_options: 
+  chunk_output_type: inline
+---
+
+## Introduction
+
+In the new age of advanced metrics in baseball, "exit velocity" and "launch angle"
+are two terms that have become quite popular. Exit velocity measures the speed
+of the ball as it comes off the bat right after contact. Launch angle represents
+the vertical angle at which the ball leaves a player's bat after contact. These 
+two things work together of course, as a combination of the ideal exit velocity 
+and launch angle is expected to produce the best possible outcome. It is very difficult 
+to connect with this ideal combination on a consistent bases. So the question is,
+which quality in a player is a better indicator for success? Does success correlate
+more with the high exit velocity or with the more ideal launch angle?
+
+## Data
+The data to be used for this case study will be strictly MLB player statistics. The main goal is to use current player performance as the model for our analysis. MLB is considered the highest level of competitive baseball. A study using MLB will allow for more consistent results as the playing field is more competitively balanced. www.Baseballsavant.mlb.com will be the main source for data. www.Baseballsavant.mlb.com boasts an extensive database with all the advanced statistics that will be needed for this case study. For the purposes of this study we will be using slugging percentage as our indicator of success.
+
+#### Importing packages
+
+```{r}
+library(tidyverse)
+library(lubridate)
+library(ggplot2)
+library(dplyr)
+library(knitr)
+```
+
+#### Importing the data
+
+```{r}
+bs_stats <- read.csv('~/desktop/Case Study 1/stats_complete.csv')
+head(bs_stats)
+```
+
+#### Clean to show relevant data
+
+```{r}
+bs_stats2 <- bs_stats %>%
+  select('slg_percent', 'launch_angle_avg', 'exit_velocity_avg', 'xslg', 'barrel_batted_rate')
+head(bs_stats2)
+```
+
+## Visualize
+
+```{r}
+slg_exit <- ggplot(bs_stats2, aes(x = slg_percent, y = exit_velocity_avg)) +
+  geom_point(color='darkred') +
+  geom_smooth(se = FALSE, color='blue')
+
+slg_la <- ggplot(bs_stats2, aes(x = slg_percent, y = launch_angle_avg)) +
+  geom_point(color='darkblue') +
+  geom_smooth(se = FALSE, color='red')
+
+xslg_exit <- ggplot(bs_stats2, aes(x = xslg, y = exit_velocity_avg)) +
+  geom_point(color='darkred') +
+  geom_smooth(se = FALSE, color='blue')
+
+xslg_la <- ggplot(bs_stats2, aes(x = xslg, y = launch_angle_avg)) +
+  geom_point(color='darkblue') +
+  geom_smooth(se = FALSE, color='red')
+
+library(gridExtra)
+grid.arrange(slg_exit, slg_la, xslg_exit, xslg_la, nrow = 2)
+```
+
+## Analysis
+We created four visualizations showing the correlations between each variable, exit velocity and launch angle, and slugging percentage and expected slugging percentage. These visuals clearly show a more direct, positive correlation between exit velocity and slugging percentage. The trend line on the launch angle data is more of a flat line showing less direct correlation between launch angle and slugging percentage. Using this information we can determine that when evaluating a player on a single variable, exit velocity is a more valuable indicator for success. What does this mean? By no means does the data indicate that launch angle is not relevant. It does however show that prioritizing exit velocity in player development could produce better results. In conclusion, players who hit the ball harder on average have proven to be more productive hitters. Exit velocity should be at the top of the list when evaluating baseball hitters.
+
+## References
+www.Baseballsavant.mlb.com
